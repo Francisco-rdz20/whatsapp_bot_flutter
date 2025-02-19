@@ -12,6 +12,7 @@ class WhatsappBotFlutterWeb {
     Function(String qrCodeUrl, Uint8List? qrCodeImage)? onQrCode,
     int qrCodeWaitDurationSeconds = 60,
   }) async {
+    print('dont work');
     return null;
   }
 }

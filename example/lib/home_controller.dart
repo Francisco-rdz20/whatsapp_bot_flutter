@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
@@ -31,14 +32,15 @@ class HomeController extends GetxController {
 
   @override
   void onInit() {
+    super.onInit();
+    // return;
     WhatsappBotUtils.enableLogs(true);
-    if (GetPlatform.isWeb) {
+    if (kIsWeb) {
       WhatsappLogger.handleLogs = (log) {
         log(log.toString());
       };
     }
     message.text = "Testing Whatsapp Bot";
-    super.onInit();
   }
 
   void getAllGroups() => client?.group.getAllGroups();
@@ -48,12 +50,12 @@ class HomeController extends GetxController {
     error.value = "";
     connected.value = false;
     try {
-      if (withExtension && GetPlatform.isWeb && GetPlatform.isDesktop) {
+      if (withExtension && kIsWeb && GetPlatform.isDesktop) {
         client = await WhatsappBotFlutterWeb.connect(
           onConnectionEvent: _onConnectionEvent,
           onQrCode: _onQrCode,
         );
-      } else if (!GetPlatform.isWeb && GetPlatform.isMobile) {
+      } else if (!kIsWeb && GetPlatform.isMobile) {
         // Initialize Mobile Client
         client = await WhatsappBotFlutterMobile.connect(
           saveSession: true,
@@ -81,11 +83,13 @@ class HomeController extends GetxController {
         initListeners(client!);
       }
     } catch (er) {
+      log('Test $er');
       error.value = er.toString();
     }
   }
 
   void _onConnectionEvent(ConnectionEvent event) {
+    log('Debuggg $event');
     connectionEvent(event);
     if (event == ConnectionEvent.connected) {
       _closeQrCodeDialog();
@@ -172,7 +176,6 @@ class HomeController extends GetxController {
       Get.log("Error : $e");
     }
   }
-
 
   Future<void> sendButtonMessage() async {
     if (!formKey.currentState!.validate()) return;

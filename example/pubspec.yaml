@@ -2,7 +2,7 @@ name: whatsapp_bot_example
 publish_to: none
 description: Demonstrates how to use the whatsapp_bot plugin.
 environment:
-  sdk: ">=2.18.2 <3.0.0"
+  sdk: ^3.5.0
 
 dependencies:
   flutter:

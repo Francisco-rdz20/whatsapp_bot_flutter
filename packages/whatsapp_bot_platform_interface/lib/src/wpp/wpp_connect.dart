@@ -1,6 +1,7 @@
 // Thanks to https://github.com/wppconnect-team/wa-js
 
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:http/http.dart' as http;
 import 'package:whatsapp_bot_platform_interface/whatsapp_bot_platform_interface.dart';
@@ -18,7 +19,7 @@ class WppConnect {
     String content = wppJsContent ?? await http.read(Uri.parse(latestBuildUrl));
     await wpClient.injectJs(content);
 
-    WhatsappLogger.log("injected Wpp");
+    // WhatsappLogger.log("injected Wpp");
 
     if (!await _waitForWppReady(wpClient, waitTimeOut)) {
       throw WhatsappException(
@@ -52,6 +53,7 @@ class WppConnect {
         '''typeof window.WPP !== 'undefined' && window.WPP.isReady;''',
         tryPromise: false,
       );
+      log('promise result $result');
       if (result == true) return true;
       WhatsappLogger.log("Checking WPP, Retrying..");
     }

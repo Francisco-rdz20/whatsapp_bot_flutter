@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:whatsapp_bot_platform_interface/whatsapp_bot_platform_interface.dart';
 import 'package:whatsapp_bot_flutter_web/src/bot_js.dart' as bot_js;
@@ -24,6 +25,7 @@ class WpClientWeb implements WpClientInterface {
     String js = source;
     js = source.replaceAll(";", "");
     var result = await bot_js.evaluateJsCodeWithPromise(js, tryPromise);
+    log('Evaluating json $js $result');
     if (result != null && result is String) {
       // Try to parse boolean
       if (result == "true" || result == "false") {
@@ -43,7 +45,8 @@ class WpClientWeb implements WpClientInterface {
       }
     }
     if (methodName?.isNotEmpty == true) {
-      WhatsappLogger.log("${methodName}_Result (${result.runtimeType}) : $result");
+      WhatsappLogger.log(
+          "${methodName}_Result (${result.runtimeType}) : $result");
     }
     return result;
   }

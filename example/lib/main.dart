@@ -7,7 +7,7 @@ import 'package:whatsapp_bot_example/home_view.dart';
 void main() {
   Get.lazyPut(() => HomeController());
   runApp(
-    GetMaterialApp(
+    MaterialApp(
       debugShowCheckedModeBanner: false,
       title: "Whatsapp Bot",
       theme: FlexThemeData.light(

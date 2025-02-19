@@ -51,14 +51,17 @@ function connect(onConnect, onWebPackReady) {
     windowName: "AcrossTab",
   });
   const tabId = tab.id;
-  callbacks[tabId] = function (result) {
-    onConnect(tabId);
-    delete callbacks[tabId];
-  };
-  callbacks["webpack.ready"] = function (result) {
-    onWebPackReady(tabId);
-    delete callbacks["webpack.ready"];
-  };
+
+  // console.log(callbacks)
+
+  onConnect(tabId);
+  onWebPackReady(tabId);
+  // callbacks[tabId] = function (result) {
+  //   delete callbacks[tabId];
+  // };
+  // callbacks["WebPackReady"] = function (result) {
+  //   delete callbacks["webpack.ready"];
+  // };
 }
 
 function dispose() {
@@ -66,7 +69,6 @@ function dispose() {
 }
 
 function evaluateJs(code, tryPromise) {
-  const randomId = Math.random().toString(36).substring(2, 8);
   var codeText = code;
   if (tryPromise) {
     codeText = `(async function() {
@@ -74,23 +76,27 @@ function evaluateJs(code, tryPromise) {
       return result;
     })()`;
   }
+
   let data = {
-    id: randomId,
     code: codeText,
     isEvent: false,
   };
-  parent.broadCastAll(data);
+
+  console.log('Debugg evaluate json');
   return new Promise((resolve, reject) => {
-    callbacks[randomId] = function (result, error) {
+    console.log('Promise result ' + resolve + ' reject ' + reject);
+    parent.broadCastAll(data, (result, error) => {
       if (error) {
-        reject(JSON.stringify(error));
+        console.log(error);
+        reject('');
       } else {
-        resolve(JSON.stringify(result));
+        console.log(result);
+        resolve(null);
       }
-      delete callbacks[randomId];
-    };
+    });
   });
 }
+
 
 async function setEvent(eventName, callback) {
   const randomId = Math.random().toString(36).substring(2, 8);

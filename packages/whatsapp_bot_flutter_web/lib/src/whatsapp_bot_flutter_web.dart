@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_print
 
 import 'dart:async';
+import 'dart:developer';
 import 'dart:typed_data';
 
 import 'package:whatsapp_bot_flutter_web/src/bot_js.dart' as bot_js;
@@ -20,18 +21,22 @@ class WhatsappBotFlutterWeb {
   }) async {
     WpClientInterface? wpClient;
     try {
+      log('Initializationg whastsapp client');
       onConnectionEvent?.call(ConnectionEvent.initializing);
-      Completer completer = Completer();
+      // Completer completer = Completer();
+
+      String tabId = '';
       bot_js.connect(
         bot_js.JsCallback((data) {
-          print("ConnectedToTab : $data");
+          log("ConnectedToTab : $data");
         }),
-        bot_js.JsCallback((data) {
-          print("WebPackReady : $data");
-          completer.complete(data);
+        bot_js.JsCallback((data) async {
+          log("WebPackReady : $data");
+          tabId = (data is Future) ? await data : data.toString();
+          // completer.complete(data);
         }),
       );
-      var tabId = await completer.future;
+      // var tabId = await completer.future;
 
       wpClient = WpClientWeb(tabId: tabId);
       await WppConnect.init(
@@ -39,6 +44,7 @@ class WhatsappBotFlutterWeb {
         wppJsContent: "",
         waitTimeOut: wppInitTimeout,
       );
+
       onConnectionEvent?.call(ConnectionEvent.waitingForLogin);
 
       await waitForLogin(
@@ -55,6 +61,7 @@ class WhatsappBotFlutterWeb {
       return client;
     } catch (e) {
       WhatsappLogger.log(e.toString());
+      log('Test $e');
       wpClient?.dispose();
       rethrow;
     }
